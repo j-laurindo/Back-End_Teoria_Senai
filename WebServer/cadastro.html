@@ -11,12 +11,64 @@
         <!-- Navegação das Páginas -->
         <nav aria-label="Navegação de Páginas">
             <ul>
+                <li><a href="http://localhost:8000">Página Inicial</a></li>
                 <li><a href="http://localhost:8000/login">Login</a></li>
                 <li><a href="http://localhost:8000/cadastro">Cadastro de Filmes</a></li>
                 <li><a href="http://localhost:8000/listarFilmes">Lista de Filmes</a></li>
             </ul>
         </nav>
     </header>
-    <h1>Cadastro de filmes</h1>
+    <main class="pagina" aria-label="Página de login do admin">
+        <section class="conteudo" aria-label="Conteúdo da Pagina">
+            <!-- Formulário de Login do Administrador -->
+            <form class="formulario" aria-label="Formulário de Login">
+                <!-- Campo do nome do filme -->
+                <div class="campoFormulario">
+                    <label for="nomeFilme">Nome do Filme:</label>
+                    <input type="text" name="nomeFilme" placeholder="Digite o nome do filme" aria-label="Campo do nome do filme" required>
+                </div>
+                <!-- Campo dos atores do filme -->
+                <div class="campoFormulario">
+                    <label for="atores">Atores do Filme:</label>
+                    <input type="text" name="Atores" placeholder="Digite o nome do ator" aria-label="Campo do nome do ator" required>
+                </div>
+                <!-- Campo de Diretor do Filme -->
+                <div class="campoFormulario">
+                    <label for="diretor">Diretor(a):</label>
+                    <input type="text" name="Atores" placeholder="Digite o nome do diretor(a) do filme" required>
+                </div>
+                <!-- Campo do Ano de Lançamento do Filme -->
+                <div class="campoFormulario">
+                    <label for="ano-filme">Ano de Lançamento:</label>
+                    <input type="month" name="ano-filme" placeholder="Digite o ano de lançamento do filme" required>
+                </div>
+                <!-- Campo do Gênero do Filme -->
+                <div class="campoFormulario">
+                    <label for="genero">Gênero:</label>
+                    <select name="genero-filme" aria-placeholder="Escolha o gênero do filme" required>
+                        <option value="terror">Terror</option>
+                        <option value="aventura">Aventura</option>
+                        <option value="acao">Ação</option>
+                        <option value="drama">Drama</option>
+                        <option value="trhiller">Thriller/Suspense</option>
+                        <option value="comediaRomantica">Comédia Romântica</option>
+                        <option value="musical">Musical</option>
+                        <option value="doc">Documentário</option>
+                    </select>
+                </div>
+                <!-- Campo da Produtora do Filme -->
+                <div class="campoFormulario">
+                    <label for="produtora">Produtora:</label>
+                    <input type="text" name="produtora" placeholder="Digite a produtora do filme" required>
+                </div>
+                <!-- Campo da Sinopse do Filme -->
+                <div class="campoFormulario">
+                    <label for="sinopse">Sinopse:</label>
+                    <textarea name="sinopse" id="sinopse" placeholder="Digite a sinopse do filme" rows="10" cols="66" required></textarea>
+                </div>
+                <input class="botao" type="submit" value="Entrar">
+            </form>
+        </section>
+    </main>
 </body>
 </html>

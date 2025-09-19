@@ -23,6 +23,7 @@
 
 import os
 from http.server import SimpleHTTPRequestHandler, HTTPServer
+from urllib.parse import parse_qs
 
 # Definição e configuração do Handler 
 class MyHandler(SimpleHTTPRequestHandler):
@@ -42,6 +43,16 @@ class MyHandler(SimpleHTTPRequestHandler):
         except FileNotFoundError:
             pass
         return super().list_directory(path)
+    
+    # Método para verificar o email e a senha
+    def account_user(self, login, password):
+        login_correto = "juliaroberts@gmail.com"
+        senha = 123
+
+        if(login == login_correto and senha == password):
+            return "Usuário logado"
+        else:
+            return "Usuário não existe"
     
     # Método GET para enviar as páginas do projeto
     def do_GET(self):
@@ -86,7 +97,28 @@ class MyHandler(SimpleHTTPRequestHandler):
                 pass
         else:
             super().do_GET()
+    
+    def do_POST(self):
+        if self.path == '/send_login':
+            content_length = int(self.headers['Content-length'])
+            body = self.rfile.read(content_length).decode('UTF-8')
+            form_data = parse_qs(body)
 
+            print("Data form: ")
+            print("Username: ",form_data.get('nomeUsuario', [""])[0])
+            print("Password: ",form_data.get('senha', [""])[0])
+
+            login = form_data.get('nomeUsuario', [""])[0]
+            password = int(form_data.get('senha', [""])[0])
+
+            entrada = self.account_user(login, password)
+
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            self.wfile.write(entrada.encode('UTF-8'))
+        else:
+            super(MyHandler, self).do_POST() 
 
 # Função Main para iniciar o servidor
 def main():
