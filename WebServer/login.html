@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="./style.css">
+    <title>Login</title>
+</head>
+<body>
+    <header class="header">
+        <!-- Navegação das Páginas -->
+        <nav aria-label="Navegação de Páginas">
+            <ul>
+                <li><a href="http://localhost:8000/login">Login</a></li>
+                <li><a href="http://localhost:8000/cadastro">Cadastro de Filmes</a></li>
+                <li><a href="http://localhost:8000/listarFilmes">Lista de Filmes</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="pagina" aria-label="Página de login do admin">
+        <!-- Formulário de Login do Administrador -->
+        <form class="formulario" aria-label="Formulário de Login">
+            <!-- Campo do nome de usuário -->
+            <div class="campoFormulario">
+                <label for="nomeUsuario">Nome de Usuário:</label>
+                <input type="text" name="nomeUsuario" placeholder="Digite seu nome de usuário" aria-label="Campo do nome de usuário" required>
+            </div>
+            <!-- Campo da senha do usuário -->
+            <div class="campoFormulario">
+                <label for="senha">Senha:</label>
+                <input type="password" name="senha" placeholder="Digite sua senha" aria-label="Campo da senha do usuário" required>
+            </div>
+            <a href="#" id="senha" aria-label="Link de 'esqueceu sua senha'">
+                <p>Esqueceu sua senha</p>
+            </a>
+            <input type="submit" value="Entrar">
+        </form>
+    </main>
+    <footer>
+
+    </footer>
+</body>
+</html>
