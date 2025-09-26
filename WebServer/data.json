@@ -1,0 +1,29 @@
+[
+    {
+        "nome": "Rio",
+        "atores": "Blu",
+        "diretor": "Ana Maria Braga",
+        "ano": "2025-09-05",
+        "generos": "terror",
+        "sinopse": "Azul",
+        "produtora": "Blue Sky"
+    },
+    {
+        "nome": "Madagascar",
+        "atores": "Leão, Girafa, Hipopotamo, Zebra",
+        "diretor": "Pinguins",
+        "ano": "2010-09-24",
+        "generos": "aventura",
+        "sinopse": "passiva loka senhor",
+        "produtora": "Dreamworks"
+    },
+    {
+        "nome": "Gabriela",
+        "atores": "Daniela",
+        "diretor": "Lara",
+        "ano": "2025-06-09",
+        "generos": "drama",
+        "sinopse": "Hands off Gabriela!",
+        "produtora": "Katseye"
+    }
+]

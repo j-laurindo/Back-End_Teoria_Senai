@@ -96,6 +96,26 @@ class MyHandler(SimpleHTTPRequestHandler):
             except FileNotFoundError:
                 self.send_error(404, "File Not Found")
                 pass
+
+        # Resposta da lista 
+        elif (self.path == "/get_lista"):
+
+            arquivo = "data.json"
+
+            if os.path.exists(arquivo):
+                with open(arquivo, encoding="utf-8") as listagem:
+                    try:
+                        filmes = json.load(listagem)
+                    except json.JSONDecodeError:
+                        filmes = []
+            else:
+                filmes = []
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps(filmes).encode("utf-8"))
+
         else:
             super().do_GET()
     
@@ -119,33 +139,49 @@ class MyHandler(SimpleHTTPRequestHandler):
             self.send_header("Content-type", "text/html")
             self.end_headers()
             self.wfile.write(entrada.encode('UTF-8'))
-        else:
-            super(MyHandler, self).do_POST() 
         
         # Tratativa de dados para o envio do cadastro de filmes
-        if self.path == '/send_register':
+        elif self.path == '/send_register':
             content_length = int(self.headers['Content-length'])
-            body = self.rfile.read(content_length).decode('UTF-8')
+            body = self.rfile.read(content_length).decode('utf-8')
             form_data = parse_qs(body)
 
-            # Dicionário de resposta do registro
-            response_register = {
-                "status": "Enviado",
-                "data": form_data
+            jsum = {
+                "nome": form_data.get('nomeFilme', [""])[0],
+                "atores":form_data.get('atores', [""])[0],
+                "diretor": form_data.get('diretor', [""])[0],
+                "ano": str(form_data.get('anoFilme', ["0"])[0]),
+                "generos": form_data.get('genero', [""])[0],
+                "sinopse": form_data.get('sinopse', [""])[0],
+                "produtora": form_data.get('produtora', [""])[0]
             }
 
-            print("Data Form: ")
-            print(response_register)
+            arquivo = "data.json"
+            if os.path.exists(arquivo):
+                with open(arquivo,  "r", encoding="utf-8") as lista:
+                    try:
+                        filmes = json.load(lista)
+                    except json.JSONDecodeError:
+                        filmes = []
+                filmes.append(jsum)
+            else:
+                filmes = [jsum]
 
-            # Conversão para JSON
-            response_json = json.dumps(response_register)
+            with open(arquivo, "w", encoding="utf-8") as lista:
+                json.dump(filmes, lista, indent=4, ensure_ascii=False)
 
             self.send_response(200)
-            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.send_header("Content-type", "application/json")
             self.end_headers()
-            self.wfile.write(response_json.encode('UTF-8'))
+            self.wfile.write(str(jsum).encode('utf-8'))
+
         else:
             super(MyHandler, self).do_POST()
+    
+    # Fazer método DELETE com remove
+    # def do_DELETE(self):
+    #     if (self.path == "")
+
 
 
 # Função Main para iniciar o servidor
