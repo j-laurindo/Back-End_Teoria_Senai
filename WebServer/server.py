@@ -22,6 +22,7 @@
 ## CRIAÇÃO DO SERVIDOR COM AS TRATATIVAS DE MÉTODOS ##
 
 import os
+import json
 from http.server import SimpleHTTPRequestHandler, HTTPServer
 from urllib.parse import parse_qs
 
@@ -99,6 +100,7 @@ class MyHandler(SimpleHTTPRequestHandler):
             super().do_GET()
     
     def do_POST(self):
+        #  Tratativa de dados para o envio/autenticação do login
         if self.path == '/send_login':
             content_length = int(self.headers['Content-length'])
             body = self.rfile.read(content_length).decode('UTF-8')
@@ -119,6 +121,32 @@ class MyHandler(SimpleHTTPRequestHandler):
             self.wfile.write(entrada.encode('UTF-8'))
         else:
             super(MyHandler, self).do_POST() 
+        
+        # Tratativa de dados para o envio do cadastro de filmes
+        if self.path == '/send_register':
+            content_length = int(self.headers['Content-length'])
+            body = self.rfile.read(content_length).decode('UTF-8')
+            form_data = parse_qs(body)
+
+            # Dicionário de resposta do registro
+            response_register = {
+                "status": "Enviado",
+                "data": form_data
+            }
+
+            print("Data Form: ")
+            print(response_register)
+
+            # Conversão para JSON
+            response_json = json.dumps(response_register)
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(response_json.encode('UTF-8'))
+        else:
+            super(MyHandler, self).do_POST()
+
 
 # Função Main para iniciar o servidor
 def main():
