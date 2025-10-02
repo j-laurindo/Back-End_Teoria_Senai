@@ -21,7 +21,7 @@
     <main class="pagina" aria-label="Página de login do admin">
         <section class="conteudo" aria-label="Conteúdo da Pagina">
             <!-- Formulário de Login do Administrador -->
-            <form class="formulario" aria-label="Formulário de Login">
+            <form class="formulario" aria-label="Formulário de Login" action="/send_register" method="post">
                 <!-- Campo do nome do filme -->
                 <div class="campoFormulario">
                     <label for="nomeFilme">Nome do Filme:</label>
@@ -30,22 +30,22 @@
                 <!-- Campo dos atores do filme -->
                 <div class="campoFormulario">
                     <label for="atores">Atores do Filme:</label>
-                    <input type="text" name="Atores" placeholder="Digite o nome do ator" aria-label="Campo do nome do ator" required>
+                    <input type="text" name="atores" placeholder="Digite o nome do ator" aria-label="Campo do nome do ator" required>
                 </div>
                 <!-- Campo de Diretor do Filme -->
                 <div class="campoFormulario">
                     <label for="diretor">Diretor(a):</label>
-                    <input type="text" name="Atores" placeholder="Digite o nome do diretor(a) do filme" required>
+                    <input type="text" name="diretor" placeholder="Digite o nome do diretor(a) do filme" required>
                 </div>
                 <!-- Campo do Ano de Lançamento do Filme -->
                 <div class="campoFormulario">
                     <label for="ano-filme">Ano de Lançamento:</label>
-                    <input type="month" name="ano-filme" placeholder="Digite o ano de lançamento do filme" required>
+                    <input type="date" name="anoFilme" placeholder="Digite o ano de lançamento do filme" required>
                 </div>
                 <!-- Campo do Gênero do Filme -->
                 <div class="campoFormulario">
                     <label for="genero">Gênero:</label>
-                    <select name="genero-filme" aria-placeholder="Escolha o gênero do filme" required>
+                    <select name="genero" aria-placeholder="Escolha o gênero do filme" required>
                         <option value="terror">Terror</option>
                         <option value="aventura">Aventura</option>
                         <option value="acao">Ação</option>

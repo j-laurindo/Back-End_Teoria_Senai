@@ -22,8 +22,9 @@
 ## CRIAÇÃO DO SERVIDOR COM AS TRATATIVAS DE MÉTODOS ##
 
 import os
+import json
 from http.server import SimpleHTTPRequestHandler, HTTPServer
-from urllib.parse import parse_qs
+from urllib.parse import parse_qs, urlparse
 
 # Definição e configuração do Handler 
 class MyHandler(SimpleHTTPRequestHandler):
@@ -95,10 +96,31 @@ class MyHandler(SimpleHTTPRequestHandler):
             except FileNotFoundError:
                 self.send_error(404, "File Not Found")
                 pass
+
+        # Resposta da lista 
+        elif (self.path == "/get_lista"):
+
+            arquivo = "data.json"
+
+            if os.path.exists(arquivo):
+                with open(arquivo, encoding="utf-8") as listagem:
+                    try:
+                        filmes = json.load(listagem)
+                    except json.JSONDecodeError:
+                        filmes = []
+            else:
+                filmes = []
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps(filmes).encode("utf-8"))
+
         else:
             super().do_GET()
     
     def do_POST(self):
+        #  Tratativa de dados para o envio/autenticação do login
         if self.path == '/send_login':
             content_length = int(self.headers['Content-length'])
             body = self.rfile.read(content_length).decode('UTF-8')
@@ -117,8 +139,122 @@ class MyHandler(SimpleHTTPRequestHandler):
             self.send_header("Content-type", "text/html")
             self.end_headers()
             self.wfile.write(entrada.encode('UTF-8'))
+        
+        # Tratativa de dados para o envio do cadastro de filmes
+        elif self.path == '/send_register':
+            content_length = int(self.headers['Content-length'])
+            body = self.rfile.read(content_length).decode('utf-8')
+            form_data = parse_qs(body)
+            id_novo = 1
+
+            if os.path.exists(arquivo):
+                with open(arquivo, "r", encoding="utf-8") as lista:
+                    try:
+                        filmes = json.load(lista)
+                        if filmes:
+                            id_novo = max(f["id"] for f in filmes) + 1
+                    except json.JSONDecodeError:
+                        filmes = []
+            else:
+                filmes = []
+
+            jsum = {
+                "id": id_novo,
+                "nome": form_data.get('nomeFilme', [""])[0],
+                "atores":form_data.get('atores', [""])[0],
+                "diretor": form_data.get('diretor', [""])[0],
+                "ano": str(form_data.get('anoFilme', ["0"])[0]),
+                "generos": form_data.get('genero', [""])[0],
+                "sinopse": form_data.get('sinopse', [""])[0],
+                "produtora": form_data.get('produtora', [""])[0]
+            }
+
+            arquivo = "data.json"
+            if os.path.exists(arquivo):
+                with open(arquivo,  "r", encoding="utf-8") as lista:
+                    try:
+                        filmes = json.load(lista)
+                    except json.JSONDecodeError:
+                        filmes = []
+                filmes.append(jsum)
+            else:
+                filmes = [jsum]
+
+            with open(arquivo, "w", encoding="utf-8") as lista:
+                json.dump(filmes, lista, indent=4, ensure_ascii=False)
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json")
+            self.end_headers()
+            self.wfile.write(str(jsum).encode('utf-8'))
+
         else:
-            super(MyHandler, self).do_POST() 
+            super(MyHandler, self).do_POST()
+    
+    # Fazer método DELETE com remove
+    def do_DELETE(self):
+        if self.path.startswith("/send_delete/"):
+            id_filme = self.path.split("/")[-1]
+            arquivo = "data.json"
+
+            if os.path.exists(arquivo):
+                with open(arquivo, "r", encoding="utf-8") as f:
+                    try:
+                        filmes = json.load(f)
+                    except json.JSONDecodeError:
+                        filmes = []
+
+                # Remove o filme com id correspondente
+                filmes = [filme for filme in filmes if str(filme.get("id")) != id_filme]
+
+                with open(arquivo, "w", encoding="utf-8") as f:
+                    json.dump(filmes, f, indent=4, ensure_ascii=False)
+
+                self.send_response(200)
+                self.send_header("Content-type", "application/json")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(b'{"mensagem": "Filme deletado com sucesso"}')
+            else:
+                self.send_error(404, "Arquivo de filmes não encontrado.")
+        else:
+            self.send_error(404, "Rota não encontrada.")
+    
+    def do_PUT(self):
+        if self.path.startswith("/send_edit/"):
+            id_filme = self.path.split("/")[-1]
+            content_length = int(self.headers['Content-Length'])
+            body = self.rfile.read(content_length).decode('utf-8')
+            novo_dado = json.loads(body)
+
+            arquivo = "data.json"
+            if os.path.exists(arquivo):
+                with open(arquivo, "r", encoding="utf-8") as f:
+                    try:
+                        filmes = json.load(f)
+                    except json.JSONDecodeError:
+                        filmes = []
+
+                for filme in filmes:
+                    if str(filme.get("id")) == id_filme:
+                        filme.update(novo_dado)  # Atualiza os campos passados
+                        break
+
+                with open(arquivo, "w", encoding="utf-8") as f:
+                    json.dump(filmes, f, indent=4, ensure_ascii=False)
+
+                self.send_response(200)
+                self.send_header("Content-type", "application/json")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(b'{"mensagem": "Filme atualizado com sucesso"}')
+            else:
+                self.send_error(404, "Arquivo de filmes não encontrado.")
+        else:
+            self.send_error(404, "Rota não encontrada.")
+
+
+
 
 # Função Main para iniciar o servidor
 def main():
