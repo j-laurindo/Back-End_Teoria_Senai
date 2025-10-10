@@ -25,6 +25,13 @@ import os
 import json
 from http.server import SimpleHTTPRequestHandler, HTTPServer
 from urllib.parse import parse_qs, urlparse
+import mysql.connector
+
+mydb = mysql.connector.connect(
+    host = "localhost",
+    user = "root",
+    password = "senai"
+)
 
 # Definição e configuração do Handler 
 class MyHandler(SimpleHTTPRequestHandler):
@@ -38,13 +45,32 @@ class MyHandler(SimpleHTTPRequestHandler):
             self.send_header("Content-type", "text/html")
             self.end_headers()
             self.wfile.write(f.read().encode('UTF-8'))
-            
+
             f.close()
             return None
         except FileNotFoundError:
             pass
         return super().list_directory(path)
     
+    def load_filme(self):
+        cursor = mydb.cursor()
+        cursor.execute("SELECT * FROM Site_Filmes.Filmes")
+        movie_result = cursor.fetchall()
+
+        for mov in movie_result:
+            id_filme = res[0]
+            titulo = res[1]
+            orcamento = res[2]
+            duracao = res[3]
+            ano = res[4]
+            poster = res[5]
+            print(id_filme, titulo, orcamento, duracao, ano, poster)
+
+        
+        
+        
+        
+
     # Método para verificar o email e a senha
     def account_user(self, login, password):
         login_correto = "juliaroberts@gmail.com"
@@ -60,6 +86,7 @@ class MyHandler(SimpleHTTPRequestHandler):
 
         # Definição do caminho de login
         if(self.path == "/login"):
+            self.load_filme()
             try:
                 with open(os.path.join(os.getcwd(), "login.html"), encoding='utf-8') as login:
                     content = login.read()
