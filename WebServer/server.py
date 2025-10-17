@@ -12,7 +12,7 @@
 # # Criação da instância do servidor
 # server = HTTPServer(("localhost", port), handler)
 
-# # Impressão da mensagem
+# # Impmovsão da mensagem
 # print(f"Server Initiated in http://localhost:{port}")
 
 # server.serve_forever()
@@ -41,7 +41,7 @@ class MyHandler(SimpleHTTPRequestHandler):
         try:
             f = open(os.path.join(path, 'index.html'), encoding='utf-8')
             
-            self.send_response(200)
+            self.send_movponse(200)
             self.send_header("Content-type", "text/html")
             self.end_headers()
             self.wfile.write(f.read().encode('UTF-8'))
@@ -57,19 +57,23 @@ class MyHandler(SimpleHTTPRequestHandler):
         cursor.execute("SELECT * FROM Site_Filmes.Filmes")
         movie_result = cursor.fetchall()
 
-        for mov in movie_result:
-            id_filme = res[0]
-            titulo = res[1]
-            orcamento = res[2]
-            duracao = res[3]
-            ano = res[4]
-            poster = res[5]
-            print(id_filme, titulo, orcamento, duracao, ano, poster)
+        filmes = []
 
+        for mov in movie_result:
+            filme = {
+                "id_filme": mov[0],
+                "titulo": mov[1],
+                "orcamento": mov[2],
+                "duracao": mov[3],
+                "ano": mov[4],
+                "poster": mov[5]
+            }
+
+            filmes.append(filme)
         
-        
-        
-        
+        cursor.close()
+        return filme
+            
 
     # Método para verificar o email e a senha
     def account_user(self, login, password):
@@ -90,7 +94,7 @@ class MyHandler(SimpleHTTPRequestHandler):
             try:
                 with open(os.path.join(os.getcwd(), "login.html"), encoding='utf-8') as login:
                     content = login.read()
-                self.send_response(200)
+                self.send_movponse(200)
                 self.send_header("Content-type", "text/html")
                 self.end_headers()
                 self.wfile.write(content.encode('UTF-8'))
@@ -103,7 +107,7 @@ class MyHandler(SimpleHTTPRequestHandler):
             try:
                 with open(os.path.join(os.getcwd(), "cadastro.html"), encoding='utf-8') as cadastro:
                     content = cadastro.read()
-                self.send_response(200)
+                self.send_movponse(200)
                 self.send_header("Content-type", "text/html")
                 self.end_headers()
                 self.wfile.write(content.encode('UTF-8'))
@@ -116,7 +120,7 @@ class MyHandler(SimpleHTTPRequestHandler):
             try:
                 with open(os.path.join(os.getcwd(), "listarFilmes.html"), encoding='utf-8') as listaFilmes:
                     content = listaFilmes.read()
-                self.send_response(200)
+                self.send_movponse(200)
                 self.send_header("Content-type", "text/html")
                 self.end_headers()
                 self.wfile.write(content.encode('UTF-8'))
@@ -124,24 +128,14 @@ class MyHandler(SimpleHTTPRequestHandler):
                 self.send_error(404, "File Not Found")
                 pass
 
-        # Resposta da lista 
-        elif (self.path == "/get_lista"):
-
-            arquivo = "data.json"
-
-            if os.path.exists(arquivo):
-                with open(arquivo, encoding="utf-8") as listagem:
-                    try:
-                        filmes = json.load(listagem)
-                    except json.JSONDecodeError:
-                        filmes = []
-            else:
-                filmes = []
-
+        elif self.path == "/get_filmes":
+            filmes = self.load_filme()  # Puxa do banco
+            
             self.send_response(200)
             self.send_header("Content-type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")  # Permite acesso do navegador
             self.end_headers()
-            self.wfile.write(json.dumps(filmes).encode("utf-8"))
+            self.wfile.write(json.dumps(filmes, ensure_ascii=False).encode('utf-8'))
 
         else:
             super().do_GET()
@@ -162,7 +156,7 @@ class MyHandler(SimpleHTTPRequestHandler):
 
             entrada = self.account_user(login, password)
 
-            self.send_response(200)
+            self.send_movponse(200)
             self.send_header("Content-type", "text/html")
             self.end_headers()
             self.wfile.write(entrada.encode('UTF-8'))
@@ -188,7 +182,7 @@ class MyHandler(SimpleHTTPRequestHandler):
             jsum = {
                 "id": id_novo,
                 "nome": form_data.get('nomeFilme', [""])[0],
-                "atores":form_data.get('atores', [""])[0],
+                "atomov":form_data.get('atomov', [""])[0],
                 "diretor": form_data.get('diretor', [""])[0],
                 "ano": str(form_data.get('anoFilme', ["0"])[0]),
                 "generos": form_data.get('genero', [""])[0],
@@ -210,7 +204,7 @@ class MyHandler(SimpleHTTPRequestHandler):
             with open(arquivo, "w", encoding="utf-8") as lista:
                 json.dump(filmes, lista, indent=4, ensure_ascii=False)
 
-            self.send_response(200)
+            self.send_movponse(200)
             self.send_header("Content-type", "application/json")
             self.end_headers()
             self.wfile.write(str(jsum).encode('utf-8'))
@@ -231,13 +225,13 @@ class MyHandler(SimpleHTTPRequestHandler):
                     except json.JSONDecodeError:
                         filmes = []
 
-                # Remove o filme com id correspondente
+                # Remove o filme com id cormovpondente
                 filmes = [filme for filme in filmes if str(filme.get("id")) != id_filme]
 
                 with open(arquivo, "w", encoding="utf-8") as f:
                     json.dump(filmes, f, indent=4, ensure_ascii=False)
 
-                self.send_response(200)
+                self.send_movponse(200)
                 self.send_header("Content-type", "application/json")
                 self.send_header("Access-Control-Allow-Origin", "*")
                 self.end_headers()
@@ -270,7 +264,7 @@ class MyHandler(SimpleHTTPRequestHandler):
                 with open(arquivo, "w", encoding="utf-8") as f:
                     json.dump(filmes, f, indent=4, ensure_ascii=False)
 
-                self.send_response(200)
+                self.send_movponse(200)
                 self.send_header("Content-type", "application/json")
                 self.send_header("Access-Control-Allow-Origin", "*")
                 self.end_headers()
@@ -285,8 +279,8 @@ class MyHandler(SimpleHTTPRequestHandler):
 
 # Função Main para iniciar o servidor
 def main():
-    server_address = ('', 8000)
-    httpd = HTTPServer(server_address, MyHandler)
+    server_addmovs = ('', 8000)
+    httpd = HTTPServer(server_addmovs, MyHandler)
     print(f"Server Initiated in http://localhost:8000")
     httpd.serve_forever()
 
